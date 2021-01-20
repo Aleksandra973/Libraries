@@ -12,8 +12,8 @@ import { defineComponent, ref } from '@vue/composition-api';
 import LibraryList from "components/LibraryList.vue";
 
 
+
 let test = async function () {
-  console.log('dfs');
   await this.$store.dispatch("libraryModule/getLibraries");
 }
 

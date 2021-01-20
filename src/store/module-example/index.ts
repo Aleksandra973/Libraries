@@ -1,14 +1,14 @@
 import { Module } from 'vuex';
 import { StateInterface } from '../index';
-import state, { LibraryList } from './state';
+import state, { LibrariesList } from './state';
 import actions from './actions';
-import getters from './getters';
+//import getters from './getters';
 import mutations from './mutations';
 
-const libraryModule: Module<LibraryList, StateInterface> = {
+const libraryModule: Module<LibrariesList, StateInterface> = {
   namespaced: true,
   actions,
-  getters,
+  //getters,
   mutations,
   state
 };
