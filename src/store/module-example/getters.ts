@@ -1,4 +1,4 @@
-/*import { GetterTree } from 'vuex';
+import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { LibrariesList} from './state';
 
@@ -11,4 +11,4 @@ const getters: GetterTree<LibrariesList, StateInterface> = {
   },
 };
 
-export default getters;*/
+export default getters;

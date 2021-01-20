@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import libraryModule from './module-example'
 
 // import example from './module-example';
-import { LibraryList } from './module-example/state';
+import { LibrariesList } from './module-example/state';
 
 /*
  * If not building with SSR mode, you can
@@ -14,7 +14,7 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  libraryModule: LibraryList;
+  libraryModule: LibrariesList;
 }
 
 export default store(function ({ Vue }) {

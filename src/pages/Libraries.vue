@@ -1,28 +1,32 @@
 <template>
   <div>
     <div class="text-h2">Libraries</div>
-    <LibraryList></LibraryList>
+    <LibrariesList></LibrariesList>
     <button @click="test">test</button>
+
   </div>
 </template>
 
 <script lang="ts">
 
 import { defineComponent, ref } from '@vue/composition-api';
-import LibraryList from "components/LibraryList.vue";
+import LibrariesList from "components/LibrariesList.vue";
+
 
 
 
 let test = async function () {
   await this.$store.dispatch("libraryModule/getLibraries");
+  //$store.state.libraryModule.libraries
 }
 
 export default defineComponent({
   name: "Libraries",
-  components: {LibraryList},
+  components: {LibrariesList},
   setup() {
     return {test}
-  }
+  },
+
 })
 </script>
 

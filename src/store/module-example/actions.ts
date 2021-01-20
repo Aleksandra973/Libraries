@@ -4,9 +4,10 @@ import {Library, LibraryResponse, LibrariesList} from './state';
 import axios from 'axios';
 
 const actions: ActionTree<LibrariesList, StateInterface> = {
-  async getLibraries ({commit}) {
+  async getLibraries ({commit}, start, rowPerPage) {
     try {
-      let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries?_start=20&_limit=2&_sort=nativeId&order=desc', {});
+      let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries',
+        {params: {_start: start, _limit: rowPerPage}});
       let librariesResponse: LibraryResponse[] = response.data
 
 
