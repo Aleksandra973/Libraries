@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h2">Libraries</div>
+    <div class="text-h2 main-title">Libraries</div>
     <LibrariesList></LibrariesList>
 
 
@@ -31,5 +31,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+  .main-title {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    font-weight: 350;
+  }
 
 </style>

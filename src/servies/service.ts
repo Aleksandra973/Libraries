@@ -1,49 +1,31 @@
 
 import axios from "axios";
+import {Library, LibraryResponse} from "src/types/service";
+import {SearchModel} from "src/types/common";
 
 
-
-export interface LibraryResponse {
-  data: {
-    general: {
-      name: string,
-      address: {
-        street: string
-      }
-      contacts: {
-        website: string
-      },
-      locale: {
-        name: string
-      },
-      organization: {
-        name: string,
-        inn: number
-      }
-    }
-
-  },
-
-}
-export interface Library {
-  name: string;
-  place: string;
-  street: string;
-  organization: string;
-  site?: string;
-  inn: number;
-}
-
-export async function getDbLength () {
+export async function getDbLength (): Promise<number> {
   let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries?_start=1&_limit=1', {});
-  let length = +response.headers['x-total-count']
+  let length: number = +response.headers['x-total-count']
   return length
 }
 
-export async function getLibraries (start: number, rowPerPage: number) {
-  try{
-    let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries',
-      {params: {_start: start, _limit: rowPerPage}});
+let libraryServicePropertyMap: Map<string, string> = new  Map<string, string>([
+  ["place", "data.general.locale.name"]
+])
+
+export async function getLibraries (searchModel: SearchModel) {
+  try {
+    let config: any = {params: {_start: searchModel.pagination.startRows(), _limit: searchModel.pagination.rowsPerPage}};
+
+    if(searchModel.filterValue){
+      config.params["data.general.name"] = searchModel.filterValue;
+    }
+    if(searchModel.sortableOptions?.sortField?.length > 0){
+      config.params['_sort'] = libraryServicePropertyMap.get(searchModel.sortableOptions.sortField ?? '');
+      config.params['_order'] = searchModel.sortableOptions.sortDirection
+    }
+    let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries',config);
     let librariesResponse: LibraryResponse[] = response.data
 
 
