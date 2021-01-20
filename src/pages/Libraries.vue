@@ -2,7 +2,7 @@
   <div>
     <div class="text-h2">Libraries</div>
     <LibrariesList></LibrariesList>
-    <button @click="test">test</button>
+
 
   </div>
 </template>

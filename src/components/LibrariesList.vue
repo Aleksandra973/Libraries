@@ -40,8 +40,8 @@ export default defineComponent({
         sortBy: 'desc',
         descending: false,
         page: 1,
-        rowsPerPage: 3,
-        rowsNumber: 12518
+        rowsPerPage: 10,
+        rowsNumber: 10
       },
       columns: [
         {
@@ -62,8 +62,9 @@ export default defineComponent({
 
     }
   },
-  mounted () {
+  async mounted () {
     // get initial data from server (1st page)
+    this.pagination.rowsNumber = await getDbLength()
     this.onRequest({
       pagination: this.pagination,
       filter: undefined
