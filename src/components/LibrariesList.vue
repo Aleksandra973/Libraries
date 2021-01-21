@@ -38,7 +38,7 @@ export default defineComponent({
       filter: '',
       loading: false,
       pagination: {
-        sortBy: 'place',
+        sortBy: 'name',
         descending: false,
         page: 1,
         rowsPerPage: 10,
@@ -64,15 +64,16 @@ export default defineComponent({
 
     }
   },
-  mounted () {
+  async mounted (): Promise {
     // get initial data from server (1st page)
+    this.pagination.rowsNumber = await getDbLength(this.search)
     this.onRequest({
       pagination: this.pagination,
       filter: undefined
     })
   },
   methods: {
-    async onRequest (props) {
+    async onRequest (props): Promise {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
 
@@ -83,9 +84,10 @@ export default defineComponent({
       this.search.pagination.page = page;
       this.pagination.rowsPerPage = rowsPerPage
       this.search.sortableOptions.sortField = sortBy;
-      this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Asc : SortDirection.Desc
+      this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
-      this.data = await getLibraries(this.search)
+      this.data = await getLibraries(this.search) as any
+      this.pagination.rowsNumber = await getDbLength(this.search)
 
       // emulate server
       /*setTimeout(() => {
