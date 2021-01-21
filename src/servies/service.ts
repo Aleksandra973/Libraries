@@ -1,7 +1,7 @@
 
 import axios from "axios";
 import {Library, LibraryResponse} from "src/types/service";
-import {SearchModel} from "src/types/common";
+import {SearchModel, SortDirection} from "src/types/common";
 
 
 export async function getDbLength (): Promise<number> {
@@ -21,11 +21,12 @@ export async function getLibraries (searchModel: SearchModel) {
     if(searchModel.filterValue){
       config.params["data.general.name"] = searchModel.filterValue;
     }
+
     if(searchModel.sortableOptions?.sortField?.length > 0){
       config.params['_sort'] = libraryServicePropertyMap.get(searchModel.sortableOptions.sortField ?? '');
-      config.params['_order'] = searchModel.sortableOptions.sortDirection
+      config.params['_order'] = searchModel.sortableOptions.sortDirection == SortDirection.Asc ? 'asc' : 'desc'
     }
-    let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries',config);
+    let response = await axios.get<LibraryResponse[]> ('http://localhost:3001/libraries',config);
     let librariesResponse: LibraryResponse[] = response.data
 
 

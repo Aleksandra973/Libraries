@@ -5,13 +5,14 @@
       :data="data"
       :columns="columns"
       row-key="id"
-      :pagination.sync="search.pagination"
-      :filter="search.filterValue"
+      :pagination.sync="pagination"
+      :loading="loading"
+      :filter="filter"
       @request="onRequest"
       binary-state-sort
     >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="search.filterValue" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
@@ -26,54 +27,65 @@
 import {
   defineComponent, PropType, computed, ref, toRef, Ref,
 } from '@vue/composition-api';
+import { SearchModel, SortDirection } from 'src/types/common';
 import {getLibraries, getDbLength} from '../servies/service'
-import {SearchModel, SortableOptions} from "src/types/common";
 
 
 export default defineComponent({
   name: "LibrariesList",
-  data() {
+  data () {
     return {
       filter: '',
       loading: false,
       pagination: {
         sortBy: 'place',
-        descending: true,
+        descending: false,
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 10
       },
       search: new SearchModel(),
       columns: [
-        {name: 'name', label: 'Название библиотеки', align: 'left', field: 'name', sortable: true},
-        {name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true},
-        {name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true},
-        {name: 'organization', align: 'center', label: 'Юридическое лицо', field: 'organization', sortable: true},
-        {name: 'site', align: 'center', label: 'Сайт', field: 'site', sortable: true},
-        {name: 'inn', align: 'center', label: 'ИНН', field: 'inn', sortable: true}
+        {
+          name: 'name',
+          required: true,
+          label: 'Название библиотеки',
+          align: 'left',
+          field: 'name',
+          sortable: true
+        },
+        { name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true },
+        { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
+        { name: 'organization', align: 'center', label: 'Юридическое лицо', field: 'organization', sortable: true },
+        { name: 'site', align: 'center', label: 'Сайт', field: 'site', sortable: true },
+        { name: 'inn', align: 'center', label: 'ИНН', field: 'inn', sortable: true }
       ],
       data: [],
 
     }
   },
-  async mounted(): Promise {
+  mounted () {
     // get initial data from server (1st page)
-    this.pagination.rowsNumber = await getDbLength()
-    await this.onRequest({
+    this.onRequest({
       pagination: this.pagination,
       filter: undefined
     })
-    this.search.sortableOptions = new SortableOptions()
-    this.search.sortableOptions.sortField = 'place'
   },
   methods: {
-    async onRequest(props): Promise {
-      const {page, rowsPerPage, sortBy, descending} = props.pagination
+    async onRequest (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
 
-      console.log(sortBy)
-      console.log(descending)
-      this.pagination.descending = true;
+      this.loading = true
+      //this.pagination.rowsNumber = getDbLength()
+      const startRow = (page - 1) * rowsPerPage
+
+      this.search.pagination.page = page;
+      this.pagination.rowsPerPage = rowsPerPage
+      this.search.sortableOptions.sortField = sortBy;
+      this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Asc : SortDirection.Desc
+
+      this.data = await getLibraries(this.search)
 
       // emulate server
       /*setTimeout(() => {
@@ -92,29 +104,20 @@ export default defineComponent({
         // clear out existing data and add new
         this.data.splice(0, this.data.length, ...returnedData)
 */
-      // don't forget to update local pagination object
+        // don't forget to update local pagination object
+        this.pagination.page = page
+        this.pagination.rowsPerPage = rowsPerPage
+        this.pagination.sortBy = sortBy
+        this.pagination.descending = descending
 
-      this.search.pagination.page = page
-
-      this.pagination.rowsNumber = await getDbLength()
-      this.search.pagination.rowsNumber = this.pagination.rowsNumber
-      debugger
-      if (sortBy?.length > 0) {
-        this.search.sortableOptions?.sortField = sortBy;
-      }
-
-      this.data = await getLibraries(this.search)
-
-      this.pagination.page = page
-      this.pagination.rowsPerPage = rowsPerPage
-      this.pagination.sortBy = sortBy
-      this.pagination.descending = descending
+        // ...and turn of loading indicator
+        this.loading = false
 
     },
 
     // emulate ajax call
     // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
+    fetchFromServer (startRow, count, filter, sortBy, descending) {
       const data = filter
         ? this.original.filter(row => row.name.includes(filter))
         : this.original.slice()
@@ -137,7 +140,7 @@ export default defineComponent({
     },
 
     // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
+    getRowsNumberCount (filter) {
       if (!filter) {
         return this.original.length
       }
@@ -150,6 +153,7 @@ export default defineComponent({
       return count
     }
   }
+
 
 
 })
