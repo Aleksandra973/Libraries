@@ -24,7 +24,7 @@ let libraryServicePropertyMap: Map<string, string> = new  Map<string, string>([
 export async function getLibraries (searchModel: SearchModel): Promise<Library[]> {
   try {
     let config: any = getQueryParams(searchModel);
-    let response = await axios.get<LibraryResponse[]> ('http://localhost:3001/libraries', config);
+    let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries', config);
     let librariesResponse: LibraryResponse[] = response.data
 
 
@@ -47,9 +47,9 @@ export async function getLibraries (searchModel: SearchModel): Promise<Library[]
 function getQueryParams(searchModel: SearchModel) {
   let config: any = { params: { _start: searchModel.pagination.startRows(), _limit: searchModel.pagination.rowsPerPage } };
 
-  if (searchModel.filterValue) {
-    config.params["data.general.name"] = searchModel.filterValue;
-  }
+  /*if (searchModel.filterValue) {
+    config.params["data.general.locale.name"] = searchModel.filterValue;
+  }*/
 
   if (searchModel.sortableOptions?.sortField?.length > 0) {
     config.params['_sort'] = libraryServicePropertyMap.get(searchModel.sortableOptions.sortField as string);
@@ -57,7 +57,7 @@ function getQueryParams(searchModel: SearchModel) {
   }
 
 if(searchModel?.filterValue?.length ?? 0 > 0){
-  config.params[libraryServicePropertyMap.get('name') as string] = searchModel.filterValue;
+  config.params[libraryServicePropertyMap.get('place') as string] = searchModel.filterValue;
 }
 
   return config;

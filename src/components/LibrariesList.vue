@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-md">
     <q-table
-      title="Каталог"
       :data="data"
       :columns="columns"
       row-key="id"
@@ -10,15 +9,20 @@
       :filter="filter"
       @request="onRequest"
       binary-state-sort
+
     >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" class="filter-input" placeholder="Введите населенный пункт/район">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
         </q-input>
       </template>
-
+      <template v-slot:body-cell-name="props">
+        <q-td :props="props">
+          <span @click="test" dense flat class="link-about"> {{props.value}}</span>
+        </q-td>
+      </template>
     </q-table>
   </div>
 </template>
@@ -52,13 +56,16 @@ export default defineComponent({
           label: 'Название библиотеки',
           align: 'left',
           field: 'name',
-          sortable: true
+          sortable: true,
+          classes: 'text-primary cursor-pointer',
+          style: 'white-space: pre-wrap',
+          headerStyle: 'font-weight: bold'
         },
-        { name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true },
-        { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
-        { name: 'organization', align: 'center', label: 'Юридическое лицо', field: 'organization', sortable: true },
-        { name: 'site', align: 'center', label: 'Сайт', field: 'site', sortable: true },
-        { name: 'inn', align: 'center', label: 'ИНН', field: 'inn', sortable: true }
+        { name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true, headerStyle: 'font-weight: bold' },
+        { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true, headerStyle: 'font-weight: bold'},
+        { name: 'organization', align: 'center', label: 'Юридическое лицо', field: 'organization', sortable: true, style: 'white-space: pre-wrap', headerStyle: 'font-weight: bold'},
+        { name: 'site', align: 'center', label: 'Сайт', field: 'site', sortable: true, headerStyle: 'font-weight: bold' },
+        { name: 'inn', align: 'center', label: 'ИНН', field: 'inn', sortable: true, headerStyle: 'font-weight: bold' }
       ],
       data: [],
 
@@ -66,24 +73,24 @@ export default defineComponent({
   },
   async mounted (): Promise {
     // get initial data from server (1st page)
-    this.pagination.rowsNumber = await getDbLength(this.search)
     this.onRequest({
       pagination: this.pagination,
       filter: undefined
     })
   },
   methods: {
+    test () {
+      this.$router.push({ path: '/about'})
+    },
     async onRequest (props): Promise {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
       console.log(filter)
 
       this.loading = true
-      //this.pagination.rowsNumber = getDbLength()
-      const startRow = (page - 1) * rowsPerPage
 
       this.search.pagination.page = page;
-      this.pagination.rowsPerPage = rowsPerPage
+      this.search.pagination.rowsPerPage = rowsPerPage;
       this.search.sortableOptions.sortField = sortBy;
       this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
@@ -104,11 +111,17 @@ export default defineComponent({
       // ...and turn of loading indicator
       this.loading = false
 
-    } 
+    }
   }
 })
 </script>
 
 <style scoped>
+.link-about{
+  text-transform: none
+}
 
+.filter-input{
+  width: 280px;
+}
 </style>

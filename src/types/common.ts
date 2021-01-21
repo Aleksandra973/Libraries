@@ -22,7 +22,7 @@ export class SortableOptions {
 }
 
 export class SearchModel {
-  filterField: string = 'name';
+  filterField: string = '';
   filterValue?: string;
   pagination: Pagination = new Pagination()
   sortableOptions: SortableOptions = new SortableOptions();

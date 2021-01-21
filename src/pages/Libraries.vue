@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-h2 main-title">Libraries</div>
+    <div class="text-h3 main-title q-pa-md">Каталог библиотек</div>
     <LibrariesList></LibrariesList>
 
 
@@ -31,10 +31,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  .main-title {
-    margin-top: 30px;
-    margin-bottom: 40px;
-    font-weight: 350;
-  }
+
 
 </style>

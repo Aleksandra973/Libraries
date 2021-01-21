@@ -8,7 +8,13 @@ const routes: RouteConfig[] = [
       { path: '', component: () => import('pages/Libraries.vue') }
     ]
   },
-
+  {
+    path: '/about',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/AboutLibrary.vue') }
+    ]
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
