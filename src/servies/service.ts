@@ -2,7 +2,7 @@
 import axios from "axios";
 import {Library, LibraryResponse} from "src/types/service";
 import {SearchModel, SortDirection} from "src/types/common";
-import { LibrariesList } from "src/store/module-example/state";
+
 
 
 export async function getDbLength (searchModel: SearchModel): Promise<number> {
@@ -30,6 +30,7 @@ export async function getLibraries (searchModel: SearchModel): Promise<Library[]
 
     let libraryList: Library[] = librariesResponse.map(x => {
       return {
+        id: x?._id,
         name: x?.data?.general?.name,
         place: x?.data?.general?.locale?.name,
         street: x?.data?.general?.address?.street,

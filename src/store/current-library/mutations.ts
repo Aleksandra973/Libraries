@@ -1,9 +1,9 @@
 import { MutationTree } from 'vuex';
-import {CurrentLibrary} from './state';
+import {CurrentLibrary, CurrentLibraryState} from './state';
 
-const mutation: MutationTree<CurrentLibrary> = {
-  setLibrary: (state, library)=> {
-    state = library
+const mutation: MutationTree<CurrentLibraryState> = {
+  setLibrary: (state, library:CurrentLibrary)=> {
+    state.currentLibrary = library
   }
 };
 

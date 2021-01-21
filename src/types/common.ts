@@ -3,7 +3,7 @@ export class Pagination {
   rowsPerPage: number = 10;
   rowsNumber: number = 10;
 
-  startRows = function(): number { return (this.page-1) * this.rowsPerPage}
+  startRows = function(this: Pagination): number { return (this.page-1) * this.rowsPerPage}
 
   /*public get startRows(): number {
     debugger

@@ -30,7 +30,17 @@ export interface CurrentLibrary {
   image: string;
 }
 
+export interface CurrentLibraryState {
+  currentLibrary?: CurrentLibrary
+}
 
+export function state(): CurrentLibraryState  {
+  return  {
+    currentLibrary: undefined
+  }
+}
+
+/*
 function state(): CurrentLibrary{
   return {
     name: '',
@@ -41,7 +51,7 @@ function state(): CurrentLibrary{
     image: '',
   }
 
-};
+};*/
 
 
 export default state;

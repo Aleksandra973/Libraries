@@ -20,7 +20,7 @@
       </template>
       <template v-slot:body-cell-name="props">
         <q-td :props="props">
-          <span @click="test" dense flat class="link-about"> {{props.value}}</span>
+          <span @click="test(props.row.id)" dense flat class="link-about"> {{props.value}}</span>
         </q-td>
       </template>
     </q-table>
@@ -71,7 +71,7 @@ export default defineComponent({
 
     }
   },
-  async mounted (): Promise {
+  async mounted (): Promise<void> {
     // get initial data from server (1st page)
     this.onRequest({
       pagination: this.pagination,
@@ -79,10 +79,12 @@ export default defineComponent({
     })
   },
   methods: {
-    test () {
+    test (id: string) {
+      console.log(id)
+      this.$store.dispatch('currentLibraryModule/getLibrary', id)
       this.$router.push({ path: '/about'})
     },
-    async onRequest (props): Promise {
+    async onRequest (props: any): Promise<void> {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
       console.log(filter)
