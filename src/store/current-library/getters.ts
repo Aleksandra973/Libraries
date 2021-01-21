@@ -1,13 +1,13 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
-import { LibrariesList} from './state';
+import {CurrentLibrary} from './state';
 
-const getters: GetterTree<LibrariesList, StateInterface> = {
+const getters: GetterTree<CurrentLibrary, StateInterface> = {
  // someAction (/!* context *!/) {
     // your code
   //}
-  libraries(state) {
-    return state.libraries;
+  library(state) {
+    return state;
   },
 };
 
