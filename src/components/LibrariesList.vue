@@ -76,6 +76,7 @@ export default defineComponent({
     async onRequest (props): Promise {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
+      console.log(filter)
 
       this.loading = true
       //this.pagination.rowsNumber = getDbLength()
@@ -86,78 +87,25 @@ export default defineComponent({
       this.search.sortableOptions.sortField = sortBy;
       this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
+      if(filter?.length > 0){
+        this.search.filterValue = filter
+      } else {
+        this.search.filterValue = undefined
+      }
+
       this.data = await getLibraries(this.search) as any
       this.pagination.rowsNumber = await getDbLength(this.search)
 
-      // emulate server
-      /*setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter)
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
 
-        // get all rows if "All" (0) is selected
-        const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
+      // ...and turn of loading indicator
+      this.loading = false
 
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(startRow, fetchCount, filter, sortBy, descending)
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData)
-*/
-        // don't forget to update local pagination object
-        this.pagination.page = page
-        this.pagination.rowsPerPage = rowsPerPage
-        this.pagination.sortBy = sortBy
-        this.pagination.descending = descending
-
-        // ...and turn of loading indicator
-        this.loading = false
-
-    },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer (startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice()
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn = sortBy === 'desc'
-          ? (descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-          )
-          : (descending
-              ? (a, b) => (parseFloat(b[sortBy]) - parseFloat(a[sortBy]))
-              : (a, b) => (parseFloat(a[sortBy]) - parseFloat(b[sortBy]))
-          )
-        data.sort(sortFn)
-      }
-
-      return data.slice(startRow, startRow + count)
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount (filter) {
-      if (!filter) {
-        return this.original.length
-      }
-      let count = 0
-      this.original.forEach((treat) => {
-        if (treat.name.includes(filter)) {
-          ++count
-        }
-      })
-      return count
-    }
+    } 
   }
-
-
-
 })
 </script>
 
