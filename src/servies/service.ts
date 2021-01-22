@@ -7,6 +7,8 @@ import {SearchModel, SortDirection} from "src/types/common";
 
 export class LibraryService {
 
+  static server_address = 'http://195.54.213.13:3001';
+
   private static getQueryParams(searchModel: SearchModel) {
     let config: any = { params: { _start: searchModel.pagination.startRows(), _limit: searchModel.pagination.rowsPerPage } };
 
@@ -24,7 +26,7 @@ export class LibraryService {
 
   public static async getLibrary (id: string): Promise<CurrentLibrary | null> {
     try {
-      let response = await axios.get<CurrentLibraryResponse[]> ('http://localhost:3000/libraries',
+      let response = await axios.get<CurrentLibraryResponse[]> (`${this.server_address}/libraries`,
         {params: {_id: id}});
       let currentLibrariesResponse: CurrentLibraryResponse = response.data[0]
 
@@ -48,7 +50,7 @@ export class LibraryService {
   public static async getLibraries (searchModel: SearchModel): Promise<Library[]> {
     try {
       let config: any = this.getQueryParams(searchModel);
-      let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries', config);
+      let response = await axios.get<LibraryResponse[]> (`${this.server_address}/libraries`, config);
       let librariesResponse: LibraryResponse[] = response.data
 
       let libraryList: Library[] = librariesResponse.map(x => {
@@ -81,7 +83,7 @@ export class LibraryService {
 
   public static async getDbLength (searchModel: SearchModel): Promise<number> {
     let config: any = this.getQueryParams(searchModel);
-    let response = await axios.get<LibraryResponse[]> ('http://localhost:3000/libraries', config);
+    let response = await axios.get<LibraryResponse[]> (`${this.server_address}/libraries`, config);
     let length: number = +response.headers['x-total-count']
     return length
   }
