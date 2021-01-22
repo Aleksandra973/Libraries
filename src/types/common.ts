@@ -5,10 +5,6 @@ export class Pagination {
 
   startRows = function(this: Pagination): number { return (this.page-1) * this.rowsPerPage}
 
-  /*public get startRows(): number {
-    debugger
-    return (this.page-1) * this.rowsPerPage
-  };*/
 }
 
 export enum SortDirection {

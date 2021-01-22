@@ -38,7 +38,7 @@ export default defineComponent({
   name: "LibrariesList",
   data () {
     return {
-      filter: '',
+      filter: "",
       loading: false,
       pagination: {
         sortBy: '',
@@ -60,7 +60,7 @@ export default defineComponent({
           style: 'white-space: pre-wrap',
           headerStyle: 'font-weight: bold'
         },
-        { name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true, headerStyle: 'font-weight: bold' },
+        { name: 'place', align: 'center', label: 'Местоположение', field: 'place', sortable: true,style: 'white-space: pre-wrap',  headerStyle: 'font-weight: bold' },
         { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true, headerStyle: 'font-weight: bold'},
         { name: 'organization', align: 'center', label: 'Юридическое лицо', field: 'organization', sortable: true, style: 'white-space: pre-wrap', headerStyle: 'font-weight: bold'},
         { name: 'site', align: 'center', label: 'Сайт', field: 'site', sortable: true, headerStyle: 'font-weight: bold' },
@@ -73,7 +73,7 @@ export default defineComponent({
   async mounted (): Promise<void> {
     // get initial data from server (1st page)
 
-    let storeSearch = this.$store.getters['librariesListModule/search']
+     let storeSearch = this.$store.getters['librariesListModule/search']
      this.pagination.page = storeSearch.pagination.page
      this.pagination.rowsPerPage = storeSearch.pagination.rowsPerPage
      this.pagination.sortBy = storeSearch.sortableOptions.sortField
@@ -82,7 +82,7 @@ export default defineComponent({
 
     this.onRequest({
       pagination: this.pagination,
-      filter: undefined
+      filter: ''
     })
   },
   methods: {
@@ -95,27 +95,24 @@ export default defineComponent({
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter ?? ''
 
-      let storeSearch = this.$store.getters['librariesListModule/search']
-
-
       this.loading = true
 
-      console.log(1)
+
 
       this.search.pagination.page = page;
       this.search.pagination.rowsPerPage = rowsPerPage;
       this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
-
-      if(filter?.length > 0){
-        this.search.filterValue = filter
-      } else {
-        this.search.filterValue = ''
-      }
+      this.search.filterValue = filter
 
       if(sortBy?.length > 0){
         this.search.sortableOptions.sortField = sortBy;
       }
+
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
 
       await this.$store.dispatch('librariesListModule/getLibraries', this.search)
 
@@ -123,14 +120,9 @@ export default defineComponent({
 
       this.pagination.rowsNumber = await LibraryService.getDbLength(this.search)
 
-      this.pagination.page = page
-      this.pagination.rowsPerPage = rowsPerPage
-      this.pagination.sortBy = sortBy
-      this.pagination.descending = descending
 
-      // ...and turn of loading indicator
       this.loading = false
-      var tmp = this.search;
+      let tmp = this.search;
 
       this.search = new SearchModel()
       this.search.pagination.page = tmp.pagination.page
@@ -140,7 +132,7 @@ export default defineComponent({
       this.search.sortableOptions.sortDirection = tmp.sortableOptions.sortDirection
 
 
-      console.log(2)
+
       }
   }
 })
