@@ -1,30 +1,30 @@
 <template>
 
-<div>
+<div class="q-pa-md">
   <span class="text-h4">{{library.name}}</span>
-  <div class="row">
+  <div class="row q-my-lg">
     <div class="col-md-4 col-sm-4 col-xs-12"><label>Адрес:</label> </div>
-    <div class="col-md-8 col-sm-8 col-xs-12">{{library.fullAddress}}</div>
+    <div class="col-md-8 col-sm-8 col-xs-12">{{checkUndefined(library.fullAddress)}}</div>
   </div>
 
-  <div class="row">
+  <div class="row q-my-lg">
     <div class="col-md-4 col-sm-4 col-xs-12"><label>Описание:</label> </div>
-    <div class="col-md-8 col-sm-8 col-xs-12" v-html="library.description">{{library.description}}</div>
+    <div class="col-md-8 col-sm-8 col-xs-12" v-html="library.description">{{checkUndefined(library.description)}}</div>
   </div>
 
-  <div class="row">
+  <div class="row q-my-lg">
     <div class="col-md-4 col-sm-4 col-xs-12"><label>Email:</label> </div>
-    <div class="col-md-8 col-sm-8 col-xs-12">{{library.email}}</div>
+    <div class="col-md-8 col-sm-8 col-xs-12">{{checkUndefined(library.email)}}</div>
   </div>
 
-  <div class="row">
+  <div class="row q-my-lg">
     <div class="col-md-4 col-sm-4 col-xs-12"><label>Телефон:</label> </div>
-    <div class="col-md-8 col-sm-8 col-xs-12">{{library.phone}}</div>
+    <div class="col-md-8 col-sm-8 col-xs-12">{{checkUndefined(library.phone)}}</div>
   </div>
 
-  <div class="row">
-    <div class="col-md-4 col-sm-4 col-xs-12"><label>КДПВ:</label> </div>
-    <div class="col-md-8 col-sm-8 col-xs-12"><img v-bind:src="library.image"/> </div>
+  <div class="row q-my-lg">
+    <div class="col-md-4 col-sm-4 col-xs-12"><label>Фото библиотеки:</label> </div>
+    <div class="col-md-8 col-sm-8 col-xs-12"><img v-if="library.image" v-bind:src="library.image"/> </div>
   </div>
 
 </div>
@@ -34,15 +34,21 @@
 import { defineComponent, ref } from '@vue/composition-api';
 import {CurrentLibrary} from "src/store/current-library/state";
 
-
-export default {
-name: "AboutLibrary",
+let checkUndefined = (value: any) => {
+  return value? value: '-'
+}
+export default defineComponent ({
+  name: "AboutLibrary",
+  setup() {
+    return {checkUndefined}
+  },
   computed: {
     library : {
       get() { return this.$store.getters["currentLibraryModule/library"] ?? {} as CurrentLibrary }
-    }
+    },
+
   }
-}
+})
 
 //console.log(this.$store.getters.library)
 

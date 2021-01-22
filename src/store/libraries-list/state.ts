@@ -1,5 +1,12 @@
-import {CurrentLibrary} from "src/types/service";
 
+export interface CurrentLibrary {
+  name: string;
+  fullAddress: string;
+  description: string;
+  email: string;
+  phone?: string;
+  image: string;
+}
 
 export interface CurrentLibraryState {
   currentLibrary?: CurrentLibrary
