@@ -9,8 +9,7 @@ const actions: ActionTree<LibrariesState, StateInterface> = {
   async getLibraries ({commit}, searchModel: SearchModel) {
     try {
       let librariesList: Library[] = await LibraryService.getLibraries(searchModel)
-      commit('setLibrary', librariesList);
-      //commit('setSearchModel', searchModel)
+      commit('setState', { librariesList, search: searchModel } as LibrariesState);
     } catch (e){
       console.log(e)
       return e;

@@ -28,10 +28,8 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType, computed, ref, toRef, Ref,
-} from '@vue/composition-api';
-import { SearchModel, SortDirection } from 'src/types/common';
+import {defineComponent,} from '@vue/composition-api';
+import {SearchModel, SortDirection} from 'src/types/common';
 import {LibraryService} from "../servies/service"
 import {Library} from "src/types/service";
 
@@ -75,8 +73,11 @@ export default defineComponent({
   async mounted (): Promise<void> {
     // get initial data from server (1st page)
     let storeSearch = this.$store.getters['librariesListModule/search']
-    this.pagination.page = 1; //storeSearch.pagination.page
-    this.pagination.rowsPerPage = 10; //storeSearch.pagination.rowsPerPage
+    this.pagination.page = storeSearch.pagination.page
+    this.pagination.rowsPerPage = storeSearch.pagination.rowsPerPage
+    this.pagination.sortBy = storeSearch.sortableOptions.sortField
+    this.pagination.descending = storeSearch.sortableOptions.sortDirection !== SortDirection.Asc
+    this.filter = storeSearch.filterValue
 
     //this.search = storeSearch;
 
@@ -91,12 +92,14 @@ export default defineComponent({
       this.$router.push({ path: '/about'})
     },
     async onRequest (props: any): Promise<void> {
+
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
 
       //let storeSearch = this.$store.getters['librariesListModule/search']
 
       this.loading = true
+
 
       this.search.pagination.page = page;
       this.search.pagination.rowsPerPage = rowsPerPage;
@@ -113,7 +116,7 @@ export default defineComponent({
       }
 
       //this.data = await getLibraries(this.search) as any
-      await this.$store.dispatch('librariesListModule/getLibraries', this.search)
+      await this.$store.dispatch('librariesListModule/getLibraries', { ...this.search})
       this.data = this.$store.getters["librariesListModule/libraries"] ?? [] as Library
       //this.pagination.rowsNumber = await getDbLength(this.search)
       this.pagination.rowsNumber = await LibraryService.getDbLength(this.search)
@@ -124,8 +127,17 @@ export default defineComponent({
 
       // ...and turn of loading indicator
       this.loading = false
+      var tmp = this.search;
 
-    }
+      this.search = new SearchModel()
+      this.search.pagination.page = tmp.pagination.page
+      this.search.pagination.rowsPerPage = tmp.pagination.rowsPerPage
+      this.search.filterValue = tmp.filterField
+      this.search.sortableOptions.sortField = tmp.sortableOptions.sortField
+      this.search.sortableOptions.sortDirection = tmp.sortableOptions.sortDirection
+
+
+      }
   }
 })
 </script>
