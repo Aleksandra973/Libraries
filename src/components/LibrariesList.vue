@@ -72,14 +72,13 @@ export default defineComponent({
   },
   async mounted (): Promise<void> {
     // get initial data from server (1st page)
-    let storeSearch = this.$store.getters['librariesListModule/search']
-    this.pagination.page = storeSearch.pagination.page
-    this.pagination.rowsPerPage = storeSearch.pagination.rowsPerPage
-    this.pagination.sortBy = storeSearch.sortableOptions.sortField
-    this.pagination.descending = storeSearch.sortableOptions.sortDirection !== SortDirection.Asc
-    this.filter = storeSearch.filterValue
 
-    //this.search = storeSearch;
+    let storeSearch = this.$store.getters['librariesListModule/search']
+     this.pagination.page = storeSearch.pagination.page
+     this.pagination.rowsPerPage = storeSearch.pagination.rowsPerPage
+     this.pagination.sortBy = storeSearch.sortableOptions.sortField
+     this.pagination.descending = storeSearch.sortableOptions.sortDirection !== SortDirection.Asc
+     this.filter = storeSearch.filterValue
 
     this.onRequest({
       pagination: this.pagination,
@@ -94,32 +93,36 @@ export default defineComponent({
     async onRequest (props: any): Promise<void> {
 
       const { page, rowsPerPage, sortBy, descending } = props.pagination
-      const filter = props.filter
+      const filter = props.filter ?? ''
 
-      //let storeSearch = this.$store.getters['librariesListModule/search']
+      let storeSearch = this.$store.getters['librariesListModule/search']
+
 
       this.loading = true
 
+      console.log(1)
 
       this.search.pagination.page = page;
       this.search.pagination.rowsPerPage = rowsPerPage;
       this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
+
       if(filter?.length > 0){
         this.search.filterValue = filter
       } else {
-        this.search.filterValue = undefined
+        this.search.filterValue = ''
       }
 
       if(sortBy?.length > 0){
         this.search.sortableOptions.sortField = sortBy;
       }
 
-      //this.data = await getLibraries(this.search) as any
-      await this.$store.dispatch('librariesListModule/getLibraries', { ...this.search})
+      await this.$store.dispatch('librariesListModule/getLibraries', this.search)
+
       this.data = this.$store.getters["librariesListModule/libraries"] ?? [] as Library
-      //this.pagination.rowsNumber = await getDbLength(this.search)
+
       this.pagination.rowsNumber = await LibraryService.getDbLength(this.search)
+
       this.pagination.page = page
       this.pagination.rowsPerPage = rowsPerPage
       this.pagination.sortBy = sortBy
@@ -137,6 +140,7 @@ export default defineComponent({
       this.search.sortableOptions.sortDirection = tmp.sortableOptions.sortDirection
 
 
+      console.log(2)
       }
   }
 })
