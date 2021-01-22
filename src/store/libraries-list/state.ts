@@ -1,35 +1,23 @@
+import {Library} from "src/types/service";
+import {Pagination, SearchModel, SortableOptions} from "src/types/common";
 
-export interface CurrentLibrary {
-  name: string;
-  fullAddress: string;
-  description: string;
-  email: string;
-  phone?: string;
-  image: string;
+export interface LibrariesState {
+  librariesList?: Library[],
+  search?: SearchModel
 }
 
-export interface CurrentLibraryState {
-  currentLibrary?: CurrentLibrary
-}
+export function state(): LibrariesState  {
+  let search = new SearchModel();
+  search.pagination.page = 1;
+  search.pagination.rowsPerPage = 10;
 
-export function state(): CurrentLibraryState  {
   return  {
-    currentLibrary: undefined
+    librariesList: undefined,
+    search: search
   }
 }
 
-/*
-function state(): CurrentLibrary{
-  return {
-    name: '',
-    fullAddress: '',
-    description: '',
-    email: '',
-    phone: '',
-    image: '',
-  }
 
-};*/
 
 
 export default state;

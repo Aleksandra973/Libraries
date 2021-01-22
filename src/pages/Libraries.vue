@@ -15,10 +15,7 @@ import LibrariesList from "components/LibrariesList.vue";
 
 
 
-//let test = async function () {
-  //await this.$store.dispatch("libraryModule/getLibraries");
-  //$store.state.libraryModule.libraries
-//}
+
 
 export default defineComponent({
   name: "Libraries",

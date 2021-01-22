@@ -11,18 +11,6 @@ export function state(): CurrentLibraryState  {
   }
 }
 
-/*
-function state(): CurrentLibrary{
-  return {
-    name: '',
-    fullAddress: '',
-    description: '',
-    email: '',
-    phone: '',
-    image: '',
-  }
-
-};*/
 
 
 export default state;

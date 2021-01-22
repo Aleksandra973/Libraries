@@ -20,7 +20,7 @@
       </template>
       <template v-slot:body-cell-name="props">
         <q-td :props="props">
-          <span @click="test(props.row.id)" dense flat class="link-about"> {{props.value}}</span>
+          <span @click="getInfoWithRedirect(props.row.id)" dense flat class="link-about"> {{props.value}}</span>
         </q-td>
       </template>
     </q-table>
@@ -32,7 +32,8 @@ import {
   defineComponent, PropType, computed, ref, toRef, Ref,
 } from '@vue/composition-api';
 import { SearchModel, SortDirection } from 'src/types/common';
-import {getLibraries, getDbLength} from '../servies/service'
+import {LibraryService} from "../servies/service"
+import {Library} from "src/types/service";
 
 
 export default defineComponent({
@@ -42,7 +43,7 @@ export default defineComponent({
       filter: '',
       loading: false,
       pagination: {
-        sortBy: 'name',
+        sortBy: '',
         descending: false,
         page: 1,
         rowsPerPage: 10,
@@ -73,27 +74,32 @@ export default defineComponent({
   },
   async mounted (): Promise<void> {
     // get initial data from server (1st page)
+    let storeSearch = this.$store.getters['librariesListModule/search']
+    this.pagination.page = 1; //storeSearch.pagination.page
+    this.pagination.rowsPerPage = 10; //storeSearch.pagination.rowsPerPage
+
+    //this.search = storeSearch;
+
     this.onRequest({
       pagination: this.pagination,
       filter: undefined
     })
   },
   methods: {
-    test (id: string) {
-      console.log(id)
+    getInfoWithRedirect (id: string) {
       this.$store.dispatch('currentLibraryModule/getLibrary', id)
       this.$router.push({ path: '/about'})
     },
     async onRequest (props: any): Promise<void> {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
       const filter = props.filter
-      console.log(filter)
+
+      //let storeSearch = this.$store.getters['librariesListModule/search']
 
       this.loading = true
 
       this.search.pagination.page = page;
       this.search.pagination.rowsPerPage = rowsPerPage;
-      this.search.sortableOptions.sortField = sortBy;
       this.search.sortableOptions.sortDirection = descending === true ? SortDirection.Desc : SortDirection.Asc
 
       if(filter?.length > 0){
@@ -102,9 +108,15 @@ export default defineComponent({
         this.search.filterValue = undefined
       }
 
-      this.data = await getLibraries(this.search) as any
-      this.pagination.rowsNumber = await getDbLength(this.search)
+      if(sortBy?.length > 0){
+        this.search.sortableOptions.sortField = sortBy;
+      }
 
+      //this.data = await getLibraries(this.search) as any
+      await this.$store.dispatch('librariesListModule/getLibraries', this.search)
+      this.data = this.$store.getters["librariesListModule/libraries"] ?? [] as Library
+      //this.pagination.rowsNumber = await getDbLength(this.search)
+      this.pagination.rowsNumber = await LibraryService.getDbLength(this.search)
       this.pagination.page = page
       this.pagination.rowsPerPage = rowsPerPage
       this.pagination.sortBy = sortBy

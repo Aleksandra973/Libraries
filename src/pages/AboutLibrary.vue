@@ -32,7 +32,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
-import {CurrentLibrary} from "src/store/current-library/state";
+import {CurrentLibrary} from "src/types/service";
+
 
 let checkUndefined = (value: any) => {
   return value? value: '-'
@@ -43,8 +44,8 @@ export default defineComponent ({
     return {checkUndefined}
   },
   computed: {
-    library : {
-      get() { return this.$store.getters["currentLibraryModule/library"] ?? {} as CurrentLibrary }
+    library () {
+      { return this.$store.getters["currentLibraryModule/library"] ?? {} as CurrentLibrary }
     },
 
   }

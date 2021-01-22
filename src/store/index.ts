@@ -2,7 +2,9 @@ import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
 //import libraryModule from './module-example'
 import currentLibraryModule from './current-library'
-import {CurrentLibrary} from "src/store/current-library/state";
+import librariesListModule from './libraries-list'
+import {CurrentLibrary, Library} from "src/types/service";
+
 
 /*
  * If not building with SSR mode, you can
@@ -14,6 +16,7 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   currentLibraryModule: CurrentLibrary;
+  librariesListModule: Library[];
 }
 
 export default store(function ({ Vue }) {
@@ -21,7 +24,8 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      currentLibraryModule
+      currentLibraryModule,
+      librariesListModule
     },
 
     // enable strict mode (adds overhead!)
